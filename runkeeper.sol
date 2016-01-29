@@ -49,4 +49,23 @@ contract RunKeeper {
         }
     }
 
+    function getMyCommitmentCount() external constant returns (uint) {
+        return accountCommitments[msg.sender].length;
+    }
+
+    function getMyCommitmentHash(uint i) external constant returns (bytes32) {
+        return accountCommitments[msg.sender][i];
+    }
+
+    function getCommitment(bytes32 hash) external constant returns (uint factId, bytes32 factHash, uint amount, address owner, address defaultAccount, address oracle, uint threshold) {
+        Commitment commitment = commitments[hash];
+        factId = commitment.factId;
+        factHash = commitment.factHash;
+        amount = commitment.amount;
+        owner = commitment.owner;
+        defaultAccount = commitment.defaultAccount;
+        oracle = commitment.oracle;
+        threshold = commitment.threshold;
+    }
+
 }
