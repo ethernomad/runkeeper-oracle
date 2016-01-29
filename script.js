@@ -15,12 +15,12 @@ $(document).ready(function() {
     event.preventDefault();
 
     var data = {
-      user_id: "29908850",
+      user_id: $("#user_id").val(),
       activity: "running",
       measurement: "total_distance",
       comparison: "ge",
-      goal: "4000",
-      settlement_date: "2014-09-23",
+      goal: $("#meters").val(),
+      settlement_date: $("#end_date").val(),
       objection_period_secs: "604800",
       accept_terms_of_service: "current",
       use_existing: "1"
