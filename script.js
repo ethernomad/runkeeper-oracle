@@ -14,18 +14,25 @@ $(document).ready(function() {
     // Stop form from submitting normally
     event.preventDefault();
 
+    var meters = $("#meters").val();
+    var defaultAccount = $("#default_account").val();
+
     var data = {
       user_id: $("#user_id").val(),
       activity: "running",
       measurement: "total_distance",
       comparison: "ge",
-      goal: $("#meters").val(),
+      goal: meters,
       settlement_date: $("#end_date").val(),
       objection_period_secs: "604800",
       accept_terms_of_service: "current",
       use_existing: "1"
     };
 
-    $.post("https://www.realitykeys.com/api/v1/runkeeper/new", data);
+    $.post("https://www.realitykeys.com/api/v1/runkeeper/new", data, function(data) {
+      console.log(data);
+      var tx = runkeeper.makeCommitment(data.id, "0x" + data.signature_v2.fact_hash, defaultAccount, "0x" + data.signature_v2.ethereum_address, meters, {gas: 250000});
+      console.log(tx);
+    });
   });
 });
