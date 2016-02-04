@@ -1,6 +1,7 @@
 contract RunKeeper {
 
     struct Commitment {
+        bool settled;
         uint factId;
         bytes32 factHash;
         uint amount;
@@ -16,6 +17,7 @@ contract RunKeeper {
     function makeCommitment(uint factId, bytes32 factHash, address defaultAccount, address oracle, uint threshold) external returns (bytes32 hash) {
         hash = sha3(this, msg.sender, msg.value, msg.data);
         commitments[hash] = Commitment({
+            settled: false,
             factId: factId,
             factHash: factHash,
             amount: msg.value,
@@ -33,10 +35,11 @@ contract RunKeeper {
         bytes32 result_hash = sha3(commitment.factHash, resultHex);
         address signer_address = ecrecover(result_hash, v, r, s);
 
-        if (signer_address != commitment.oracle) {
-            throw;
+        if (commitment.settled || (signer_address != commitment.oracle)) {
+            return;
         }
 
+        commitment.settled = true;
         uint result = uint(resultHex);
 
         if (result > commitment.threshold) {
