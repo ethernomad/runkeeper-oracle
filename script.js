@@ -9,6 +9,19 @@ $(document).ready(function() {
 
   var runkeeper = runkeeperContract.at("0x5fdef2af54a909fa431f78cca795052e9fb1aba7");
 
+  var numCommitments = runkeeper.getMyCommitmentCount();
+  $('#commitments').append('Number of commitments: ' + numCommitments + '<br />');
+
+  for (var i = 0; i < numCommitments; i++) {
+    var hash = runkeeper.getMyCommitmentHash(i);
+    $('#commitments').append('<code class="hash">' + hash + '</code><br />');
+  }
+  
+  $('.hash').on('click', function(event) {
+    showCommitment($(this).text());
+  });
+
+
   $("#create").submit(function(event) {
 
     // Stop form from submitting normally
@@ -35,4 +48,23 @@ $(document).ready(function() {
       console.log(tx);
     });
   });
+
+  function showCommitment(hash) {
+    $('body').empty();
+    var details = runkeeper.getCommitment(hash);
+    var factId = details[0].toFixed();
+    var amount = details[2].toFixed();
+    
+    $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
+      console.log(data);
+      $('body').append("Activity: " + data.activity + "<br />");
+      $('body').append("Goal: " + data.goal + "<br />");
+      $('body').append("Settlement date: " + data.settlement_date + "<br />");
+      
+      if (data.signature_v2.signed_value) {
+        var tx = runkeeper.makeCommitment(hash, data.signature_v2.signed_value, data.signature_v2.sig_v, data.signature_v2.sig_r, data.signature_v2.sig_s, {gas: 250000});
+        console.log(tx);
+      }
+    });
+  }
 });
