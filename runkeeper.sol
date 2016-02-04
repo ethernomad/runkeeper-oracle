@@ -14,6 +14,8 @@ contract RunKeeper {
     mapping (bytes32 => Commitment) commitments;
     mapping (address => bytes32[]) accountCommitments;
 
+    event commitmentSettled(bytes32 indexed hash, bool result);
+
     function makeCommitment(uint factId, bytes32 factHash, address defaultAccount, address oracle, uint threshold) external returns (bytes32 hash) {
         hash = sha3(this, msg.sender, msg.value, msg.data);
         commitments[hash] = Commitment({
@@ -44,10 +46,12 @@ contract RunKeeper {
 
         if (result > commitment.threshold) {
             commitment.owner.send(commitment.amount);
+            commitmentSettled(hash, true);
             return true;
         }
         else {
             commitment.defaultAccount.send(commitment.amount);
+            commitmentSettled(hash, false);
             return false;
         }
     }
