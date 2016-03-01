@@ -62,7 +62,7 @@ $(document).ready(function() {
       $('body').append("Settlement date: " + data.settlement_date + "<br />");
       
       if (data.signature_v2.signed_value) {
-        var tx = runkeeper.makeCommitment(hash, data.signature_v2.signed_value, data.signature_v2.sig_v, data.signature_v2.sig_r, data.signature_v2.sig_s, {gas: 250000});
+        var tx = runkeeper.makeCommitment(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000});
         console.log(tx);
       }
     });
