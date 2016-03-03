@@ -8,7 +8,6 @@ contract RunKeeper {
         address owner;
         address defaultAccount;
         address oracle;
-        uint threshold;
     }
 
     mapping (bytes32 => Commitment) commitments;
@@ -16,7 +15,7 @@ contract RunKeeper {
 
     event commitmentSettled(bytes32 indexed hash, bool result);
 
-    function makeCommitment(uint factId, bytes32 factHash, address defaultAccount, address oracle, uint threshold) external returns (bytes32 hash) {
+    function makeCommitment(uint factId, bytes32 factHash, address defaultAccount, address oracle) external returns (bytes32 hash) {
         hash = sha3(this, msg.sender, msg.value, msg.data);
         commitments[hash] = Commitment({
             settled: false,
@@ -26,7 +25,6 @@ contract RunKeeper {
             owner: msg.sender,
             defaultAccount: defaultAccount,
             oracle: oracle,
-            threshold: threshold,
         });
         accountCommitments[msg.sender].push(hash);
     }
@@ -42,9 +40,8 @@ contract RunKeeper {
         }
 
         commitment.settled = true;
-        uint result = uint(resultHex);
 
-        if (result > commitment.threshold) {
+        if (uint(resultHex) > 1) {
             commitment.owner.send(commitment.amount);
             commitmentSettled(hash, true);
             return true;
@@ -72,7 +69,6 @@ contract RunKeeper {
         owner = commitment.owner;
         defaultAccount = commitment.defaultAccount;
         oracle = commitment.oracle;
-        threshold = commitment.threshold;
     }
 
 }
