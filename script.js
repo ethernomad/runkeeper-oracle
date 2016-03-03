@@ -9,11 +9,11 @@ $(document).ready(function() {
 
   var runkeeper = runkeeperContract.at("0x0a5e1b6318a6ac3ae9bcd5346be0e92b6007eb1d");
 
-  var numCommitments = runkeeper.getMyCommitmentCount();
+  var numCommitments = runkeeper.getMyCommitmentCount({}, 'pending');
   $('#commitments').append('Number of commitments: ' + numCommitments + '<br />');
 
   for (var i = 0; i < numCommitments; i++) {
-    var hash = runkeeper.getMyCommitmentHash(i);
+    var hash = runkeeper.getMyCommitmentHash(i, {}, 'pending');
     $('#commitments').append('<code class="hash">' + hash + '</code><br />');
   }
   
@@ -51,7 +51,7 @@ $(document).ready(function() {
 
   function showCommitment(hash) {
     $('body').empty();
-    var details = runkeeper.getCommitment(hash);
+    var details = runkeeper.getCommitment(hash, {}, 'pending');
     var factId = details[0].toFixed();
     var amount = details[2].toFixed();
     
