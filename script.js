@@ -79,6 +79,7 @@ $(document).ready(function() {
     $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
       $('body').empty();
       $('body').fadeTo('fast', 1);
+      $('body').append("User ID: " + data.user_id + "<br />");
       $('body').append("Activity: " + data.activity + "<br />");
       $('body').append("Goal: " + data.goal + "<br />");
       $('body').append("Settlement date: " + data.settlement_date + "<br />");
