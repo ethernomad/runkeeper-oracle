@@ -1,6 +1,20 @@
 "use strict";
 
 $(document).ready(function() {
+
+  $('#runkeeper').on('click', function(event) {
+    event.preventDefault();
+    location = "https://www.realitykeys.com/runkeeper/start-auth?return_url=" + encodeURIComponent(location.protocol + '//' + location.host + location.pathname);
+  });
+
+  var queries = {};
+  $.each(document.location.search.substr(1).split('&'), function(c,q){
+      var i = q.split('=');
+      queries[i[0].toString()] = i[1].toString();
+  });
+
+  $('#user_id').val(queries.completed_user_id);
+
   var web3 = new Web3();
   web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
   web3.eth.defaultAccount = web3.eth.accounts[0];
