@@ -58,8 +58,14 @@ $(document).ready(function() {
 
     $.post("https://www.realitykeys.com/api/v1/runkeeper/new", data, function(data) {
       console.log(data);
-      var tx = runkeeper.makeCommitment(data.id, "0x" + data.signature_v2.fact_hash, defaultAccount, "0x" + data.signature_v2.ethereum_address, {gas: 250000});
-      console.log(tx);
+      var tx = runkeeper.makeCommitment(data.id, "0x" + data.signature_v2.fact_hash, defaultAccount, "0x" + data.signature_v2.ethereum_address, {gas: 250000}, function(err, tx) {
+        if (err) {
+          alert(err);
+        }
+        else {
+          location.reload();
+        }
+      });
     });
   });
 
