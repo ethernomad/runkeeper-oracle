@@ -61,7 +61,7 @@ contract RunKeeper {
         return accountCommitments[msg.sender][i];
     }
 
-    function getCommitment(bytes32 hash) external constant returns (uint factId, bytes32 factHash, uint amount, address owner, address defaultAccount, address oracle, uint threshold) {
+    function getCommitment(bytes32 hash) external constant returns (uint factId, bytes32 factHash, uint amount, address owner, address defaultAccount, address oracle, bool settled) {
         Commitment commitment = commitments[hash];
         factId = commitment.factId;
         factHash = commitment.factHash;
@@ -69,6 +69,7 @@ contract RunKeeper {
         owner = commitment.owner;
         defaultAccount = commitment.defaultAccount;
         oracle = commitment.oracle;
+        settled = commitment.settled;
     }
 
 }
