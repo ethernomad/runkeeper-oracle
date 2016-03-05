@@ -70,13 +70,15 @@ $(document).ready(function() {
   });
 
   function showCommitment(hash) {
-    $('body').empty();
+    $('body').fadeTo('slow', 0);
+
     var details = runkeeper.getCommitment(hash, {}, 'pending');
     var factId = details[0].toFixed();
     var amount = details[2].toFixed();
     
     $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
-      console.log(data);
+      $('body').empty();
+      $('body').fadeTo('fast', 1);
       $('body').append("Activity: " + data.activity + "<br />");
       $('body').append("Goal: " + data.goal + "<br />");
       $('body').append("Settlement date: " + data.settlement_date + "<br />");
