@@ -81,6 +81,17 @@ $(document).ready(function() {
       $('body').append("Goal: " + data.goal + "<br />");
       $('body').append("Settlement date: " + data.settlement_date + "<br />");
       
+      runkeeper.getCommitment(hash, function(err, result) {
+        if (err) {
+          alert(err);
+        }
+        else {
+          $('body').append("Amount (ether): " +  web3.fromWei(result[2], 'ether') + "<br />");
+          $('body').append("Success payout address: " +  result[3] + "<br />");
+          $('body').append("Failure payout address: " +  result[4] + "<br />");
+        }
+      });
+
       if (data.signature_v2.signed_value) {
         var tx = runkeeper.makeCommitment(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000});
         console.log(tx);
