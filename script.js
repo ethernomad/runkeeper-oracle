@@ -28,7 +28,7 @@ $(document).ready(function() {
 
   for (var i = 0; i < numCommitments; i++) {
     var hash = runkeeper.getMyCommitmentHash(i, {}, 'pending');
-    $('#commitments').append('<code class="hash">' + hash + '</code><br />');
+    $('#commitments').append('<code style="cursor: pointer;" class="hash">' + hash + '</code><br />');
   }
   
   $('.hash').on('click', function(event) {
@@ -58,7 +58,7 @@ $(document).ready(function() {
 
     $.post("https://www.realitykeys.com/api/v1/runkeeper/new", data, function(data) {
       console.log(data);
-      var tx = runkeeper.makeCommitment(data.id, "0x" + data.signature_v2.fact_hash, defaultAccount, "0x" + data.signature_v2.ethereum_address, {gas: 250000}, function(err, tx) {
+      var tx = runkeeper.makeCommitment(data.id, "0x" + data.signature_v2.fact_hash, defaultAccount, "0x" + data.signature_v2.ethereum_address, {value: web3.toWei($("#amount").val(), "ether"), gas: 250000}, function(err, tx) {
         if (err) {
           alert(err);
         }
