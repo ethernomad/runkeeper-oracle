@@ -83,7 +83,7 @@ $(document).ready(function() {
       $('body').append("Goal: " + data.goal + "<br />");
       $('body').append("Settlement date: " + data.settlement_date + "<br />");
       
-      runkeeper.getCommitment(hash, function(err, result) {
+      runkeeper.getCommitment(hash, {}, 'pending', function(err, result) {
         if (err) {
           alert(err);
         }
@@ -91,6 +91,7 @@ $(document).ready(function() {
           $('body').append("Amount (ether): " +  web3.fromWei(result[2], 'ether') + "<br />");
           $('body').append("Success payout address: " +  result[3] + "<br />");
           $('body').append("Failure payout address: " +  result[4] + "<br />");
+          $('body').append("Settled: " +  (result[6] ? "true" : "false") + "<br />");
         }
       });
 
