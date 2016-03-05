@@ -92,13 +92,15 @@ $(document).ready(function() {
           $('body').append("Success payout address: " +  result[3] + "<br />");
           $('body').append("Failure payout address: " +  result[4] + "<br />");
           $('body').append("Settled: " +  (result[6] ? "true" : "false") + "<br />");
+
+          if (!result[6] && data.signature_v2.signed_value) {
+            $('body').append("Attempting to settle...<br />");
+            var tx = runkeeper.settle(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000}, function(err, tx) {
+              showCommitment(hash);
+            });
+          }
         }
       });
-
-      if (data.signature_v2.signed_value) {
-        var tx = runkeeper.makeCommitment(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000});
-        console.log(tx);
-      }
     });
   }
 });
