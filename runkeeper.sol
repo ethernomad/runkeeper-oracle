@@ -41,7 +41,7 @@ contract RunKeeper {
 
         commitment.settled = true;
 
-        if (uint(resultHex) > 1) {
+        if (uint(resultHex) > 0) {
             commitment.owner.send(commitment.amount);
             commitmentSettled(hash, true);
             return true;
