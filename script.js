@@ -1,11 +1,29 @@
 "use strict";
 
-$(document).ready(function() {
+var runkeeper;
 
+function newCommitment(user_id) {
+  $('#user_id').val(user_id);
+  $('#create').show();
+}
+
+function listCommitments() {
+  $('#runkeeper').show();
   $('#runkeeper').on('click', function(event) {
     event.preventDefault();
     location = "https://www.realitykeys.com/runkeeper/start-auth?return_url=" + encodeURIComponent(location.protocol + '//' + location.host + location.pathname);
   });
+
+  var numCommitments = runkeeper.getMyCommitmentCount({}, 'pending');
+  $('#commitments').append('Number of commitments: ' + numCommitments + '<br />');
+
+  for (var i = 0; i < numCommitments; i++) {
+    var hash = runkeeper.getMyCommitmentHash(i, {}, 'pending');
+    $('#commitments').append('<code style="cursor: pointer;" class="hash">' + hash + '</code><br />');
+  }
+}
+
+$(document).ready(function() {
 
   var queries = {};
   $.each(document.location.search.substr(1).split('&'), function(c,q){
@@ -15,24 +33,21 @@ $(document).ready(function() {
       }
   });
 
-  $('#user_id').val(queries.completed_user_id);
-
   var web3 = new Web3();
   web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
   web3.eth.defaultAccount = web3.eth.accounts[0];
 
   var runkeeperContract = web3.eth.contract([{"constant":false,"inputs":[{"name":"hash","type":"bytes32"},{"name":"resultHex","type":"bytes32"},{"name":"v","type":"uint8"},{"name":"r","type":"bytes32"},{"name":"s","type":"bytes32"}],"name":"settle","outputs":[{"name":"","type":"bool"}],"type":"function"},{"constant":true,"inputs":[{"name":"hash","type":"bytes32"}],"name":"getCommitment","outputs":[{"name":"factId","type":"uint256"},{"name":"factHash","type":"bytes32"},{"name":"amount","type":"uint256"},{"name":"owner","type":"address"},{"name":"defaultAccount","type":"address"},{"name":"oracle","type":"address"},{"name":"settled","type":"bool"}],"type":"function"},{"constant":true,"inputs":[],"name":"getMyCommitmentCount","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"factId","type":"uint256"},{"name":"factHash","type":"bytes32"},{"name":"defaultAccount","type":"address"},{"name":"oracle","type":"address"}],"name":"makeCommitment","outputs":[{"name":"hash","type":"bytes32"}],"type":"function"},{"constant":true,"inputs":[{"name":"i","type":"uint256"}],"name":"getMyCommitmentHash","outputs":[{"name":"","type":"bytes32"}],"type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"hash","type":"bytes32"},{"indexed":false,"name":"result","type":"bool"}],"name":"commitmentSettled","type":"event"}]);
 
-  var runkeeper = runkeeperContract.at("0x8d4a168bfabd4bfb4e2539828ad966a72b4ffc70");
+  runkeeper = runkeeperContract.at("0x8d4a168bfabd4bfb4e2539828ad966a72b4ffc70");
 
-  var numCommitments = runkeeper.getMyCommitmentCount({}, 'pending');
-  $('#commitments').append('Number of commitments: ' + numCommitments + '<br />');
-
-  for (var i = 0; i < numCommitments; i++) {
-    var hash = runkeeper.getMyCommitmentHash(i, {}, 'pending');
-    $('#commitments').append('<code style="cursor: pointer;" class="hash">' + hash + '</code><br />');
+  if (queries.completed_user_id > 0) {
+    newCommitment(queries.completed_user_id);
   }
-  
+  else {
+    listCommitments();
+  }
+
   $('.hash').on('click', function(event) {
     showCommitment($(this).text());
   });
