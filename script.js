@@ -48,25 +48,17 @@ function showCommitment(hash) {
     $('#main').append("Activity: " + data.activity + "<br />");
     $('#main').append("Goal: " + data.goal + "m<br />");
     $('#main').append("Settlement date: " + data.settlement_date + "<br />");
-    
-    runkeeper.getCommitment(hash, {}, 'pending', function(err, result) {
-      if (err) {
-        alert(err);
-      }
-      else {
-        $('#main').append("Amount (ether): " +  web3.fromWei(result[2], 'ether') + "<br />");
-        $('#main').append("Success payout address: " +  result[3] + "<br />");
-        $('#main').append("Failure payout address: " +  result[4] + "<br />");
-        $('#main').append("Settled: " +  (result[6] ? "true" : "false") + "<br />");
+    $('#main').append("Amount (ether): " +  web3.fromWei(details[2], 'ether') + "<br />");
+    $('#main').append("Success payout address: " + details[3] + "<br />");
+    $('#main').append("Failure payout address: " + details[4] + "<br />");
+    $('#main').append("Settled: " +  (details[6] ? "true" : "false") + "<br />");
 
-        if (!result[6] && data.signature_v2.signed_value) {
-          $('#main').append("Attempting to settle...<br />");
-          var tx = runkeeper.settle(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000}, function(err, tx) {
-            showCommitment(hash);
-          });
-        }
-      }
-    });
+    if (!result[6] && data.signature_v2.signed_value) {
+      $('#main').append("Attempting to settle...<br />");
+      var tx = runkeeper.settle(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000}, function(err, tx) {
+        showCommitment(hash);
+      });
+    }
   });
 }
 
