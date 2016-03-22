@@ -11,9 +11,11 @@
 
 <body>
 
-<div>
-    <button style="display: none;" id="runkeeper" />Create new commitment</button>
-</div>
+<h1 style="cursor: pointer;" onclick="location.reload();">Runkeeper Oracle</h1>
+
+<div id="main">
+
+<h2>Existing commitments</h2>
 
 <form id="create" style="display: none;">
 
@@ -47,7 +49,23 @@
     </div>
 </form>
 
-<div id="commitments"></div>
+<div id="commitments" style="display: none;">
 
+<table>
+  <tbody>
+  <tr>
+    <th>Goal</th>
+    <th>Date</th>
+    <th>Amount</th>
+    <th>Settled</th>
+  </tr>
+  </tbody>
+</table>
+
+<br />
+<button id="runkeeper" />Create new commitment</button>
+
+</div>
+</div>
 </body>
 </html>

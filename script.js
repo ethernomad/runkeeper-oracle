@@ -1,6 +1,6 @@
 "use strict";
 
-var runkeeper;
+var runkeeper, web3;
 
 function newCommitment(user_id) {
   $('#user_id').val(user_id);
@@ -8,19 +8,66 @@ function newCommitment(user_id) {
 }
 
 function listCommitments() {
-  $('#runkeeper').show();
   $('#runkeeper').on('click', function(event) {
     event.preventDefault();
     location = "https://www.realitykeys.com/runkeeper/start-auth?return_url=" + encodeURIComponent(location.protocol + '//' + location.host + location.pathname);
   });
 
+  $('#commitments').show();
+
   var numCommitments = runkeeper.getMyCommitmentCount({}, 'pending');
-  $('#commitments').append('Number of commitments: ' + numCommitments + '<br />');
 
   for (var i = 0; i < numCommitments; i++) {
     var hash = runkeeper.getMyCommitmentHash(i, {}, 'pending');
-    $('#commitments').append('<code style="cursor: pointer;" class="hash">' + hash + '</code><br />');
+    var details = runkeeper.getCommitment(hash, {}, 'pending');
+    var factId = details[0].toFixed();
+    var amount = details[2].toFixed();
+
+    $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
+    
+      $('#commitments table tbody').append('<tr><td>' + data.goal + 'm</td><td>' + data.settlement_date + '</td><td>' + web3.fromWei(details[2], 'ether') + ' ether</td><td>' + (details[6] ? "true" : "false") + '</td><td><a href="#" class="hash-' + hash + '">view</a></td></tr>');
+
+      $('.hash-' + hash).on('click', function(event) {
+        showCommitment(hash);
+      });
+    });
   }
+}
+
+function showCommitment(hash) {
+  $('#main').fadeTo('slow', 0);
+
+  var details = runkeeper.getCommitment(hash, {}, 'pending');
+  var factId = details[0].toFixed();
+  var amount = details[2].toFixed();
+  
+  $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
+    $('#main').empty();
+    $('#main').fadeTo('fast', 1);
+    $('#main').append("User ID: " + data.user_id + "<br />");
+    $('#main').append("Activity: " + data.activity + "<br />");
+    $('#main').append("Goal: " + data.goal + "m<br />");
+    $('#main').append("Settlement date: " + data.settlement_date + "<br />");
+    
+    runkeeper.getCommitment(hash, {}, 'pending', function(err, result) {
+      if (err) {
+        alert(err);
+      }
+      else {
+        $('#main').append("Amount (ether): " +  web3.fromWei(result[2], 'ether') + "<br />");
+        $('#main').append("Success payout address: " +  result[3] + "<br />");
+        $('#main').append("Failure payout address: " +  result[4] + "<br />");
+        $('#main').append("Settled: " +  (result[6] ? "true" : "false") + "<br />");
+
+        if (!result[6] && data.signature_v2.signed_value) {
+          $('#main').append("Attempting to settle...<br />");
+          var tx = runkeeper.settle(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000}, function(err, tx) {
+            showCommitment(hash);
+          });
+        }
+      }
+    });
+  });
 }
 
 $(document).ready(function() {
@@ -33,7 +80,7 @@ $(document).ready(function() {
       }
   });
 
-  var web3 = new Web3();
+  web3 = new Web3();
   web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
   web3.eth.defaultAccount = web3.eth.accounts[0];
 
@@ -47,10 +94,6 @@ $(document).ready(function() {
   else {
     listCommitments();
   }
-
-  $('.hash').on('click', function(event) {
-    showCommitment($(this).text());
-  });
 
 
   $("#create").submit(function(event) {
@@ -85,40 +128,4 @@ $(document).ready(function() {
       });
     });
   });
-
-  function showCommitment(hash) {
-    $('body').fadeTo('slow', 0);
-
-    var details = runkeeper.getCommitment(hash, {}, 'pending');
-    var factId = details[0].toFixed();
-    var amount = details[2].toFixed();
-    
-    $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
-      $('body').empty();
-      $('body').fadeTo('fast', 1);
-      $('body').append("User ID: " + data.user_id + "<br />");
-      $('body').append("Activity: " + data.activity + "<br />");
-      $('body').append("Goal: " + data.goal + "<br />");
-      $('body').append("Settlement date: " + data.settlement_date + "<br />");
-      
-      runkeeper.getCommitment(hash, {}, 'pending', function(err, result) {
-        if (err) {
-          alert(err);
-        }
-        else {
-          $('body').append("Amount (ether): " +  web3.fromWei(result[2], 'ether') + "<br />");
-          $('body').append("Success payout address: " +  result[3] + "<br />");
-          $('body').append("Failure payout address: " +  result[4] + "<br />");
-          $('body').append("Settled: " +  (result[6] ? "true" : "false") + "<br />");
-
-          if (!result[6] && data.signature_v2.signed_value) {
-            $('body').append("Attempting to settle...<br />");
-            var tx = runkeeper.settle(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000}, function(err, tx) {
-              showCommitment(hash);
-            });
-          }
-        }
-      });
-    });
-  }
 });
