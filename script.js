@@ -163,7 +163,7 @@ $(document).ready(function() {
             alert(err);
           }
           else {
-            location.reload();
+            window.location = window.location.pathname;
           }
         });
       }
