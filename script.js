@@ -49,16 +49,18 @@ function showCommitment(hash) {
     $('#main').empty();
     $('#main').fadeTo('fast', 1);
     $('#main').append('<h2>Commitment information</h2>');
-    $('#main').append('<table><tbody>');
-    $('#main').append('<tr><td>User ID</td><td>' + data.user_id + '</td></tr>');
-    $('#main').append('<tr><td>Activity</td><td>' + data.activity + '</td></tr>');
-    $('#main').append('<tr><td>Goal</td><td>' + data.goal + 'm</td></tr>');
-    $('#main').append('<tr><td>Settlement date</td><td>' + data.settlement_date + '</td></tr>');
-    $('#main').append('<tr><td>Amount</td><td>' +  web3.fromWei(details[2], 'ether') + ' ether</td></tr>');
-    $('#main').append('<tr><td>Success payout address</td><td><code>' + details[3] + '</code></td></tr>');
-    $('#main').append('<tr><td>Failure payout address</td><td><code>' + details[4] + '</code></td></tr>');
-    $('#main').append('<tr><td>Settled</td><td>' +  (details[6] ? "true" : "false") + '</td></tr>');
-    $('#main').append('</tbody></table>');
+
+    var table = '<table class="specific-commitment"><tbody>';
+    table += '<tr><td>User ID</td><td>' + data.user_id + '</td></tr>';
+    table += '<tr><td>Activity</td><td>' + data.activity + '</td></tr>';
+    table += '<tr><td>Goal</td><td>' + data.goal + 'm</td></tr>';
+    table += '<tr><td>Settlement date</td><td>' + data.settlement_date + '</td></tr>';
+    table += '<tr><td>Amount</td><td>' +  web3.fromWei(details[2], 'ether') + ' ether</td></tr>';
+    table += '<tr><td>Success payout address</td><td><code>' + details[3] + '</code></td></tr>';
+    table += '<tr><td>Failure payout address</td><td><code>' + details[4] + '</code></td></tr>';
+    table += '<tr><td>Settled</td><td>' +  (details[6] ? "true" : "false") + '</td></tr>';
+    table += '</tbody></table>';
+    $('#main').append(table);
 
     if (!result[6] && data.signature_v2.signed_value) {
       $('#main').append("Attempting to settle...<br />");

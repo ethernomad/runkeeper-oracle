@@ -7,11 +7,20 @@ h1 {
   display: none;
 }
 
-th, td {
+table.commitments th, td {
   padding: 10px;
   text-align: right;
 }
 
 td.loading {
   text-align: center;
+}
+
+table.specific-commitment td {
+  padding: 10px;
+  text-align: right;
+}
+
+table.specific-commitment td:nth-child(2) {
+  text-align: left;
 }
