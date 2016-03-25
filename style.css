@@ -7,8 +7,11 @@ h1 {
   display: none;
 }
 
-table tbody tr th,
-table tbody tr td {
+th, td {
   padding: 10px;
   text-align: right;
+}
+
+td.loading {
+  text-align: center;
 }

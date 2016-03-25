@@ -16,6 +16,9 @@ function listCommitments() {
   $('#commitments').show();
 
   var numCommitments = runkeeper.getMyCommitmentCount({}, 'pending');
+  if (numCommitments == 0) {
+    $('td.loading').hide();
+  }
 
   for (var i = 0; i < numCommitments; i++) {
     var hash = runkeeper.getMyCommitmentHash(i, {}, 'pending');
@@ -25,6 +28,7 @@ function listCommitments() {
 
     $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
     
+      $('td.loading').hide();
       $('#commitments table tbody').append('<tr><td>' + data.goal + '</td><td>' + data.settlement_date + '</td><td>' + web3.fromWei(details[2], 'ether') + '</td><td>' + (details[6] ? "true" : "false") + '</td><td><a href="#" class="hash-' + hash + '">view</a></td></tr>');
 
       $('.hash-' + hash).on('click', function(event) {
@@ -44,6 +48,7 @@ function showCommitment(hash) {
   $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
     $('#main').empty();
     $('#main').fadeTo('fast', 1);
+    $('#main').append('<h2>Commitment information</h2>');
     $('#main').append('<table><tbody>');
     $('#main').append('<tr><td>User ID</td><td>' + data.user_id + '</td></tr>');
     $('#main').append('<tr><td>Activity</td><td>' + data.activity + '</td></tr>');
