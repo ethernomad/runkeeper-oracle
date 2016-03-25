@@ -25,7 +25,7 @@ function listCommitments() {
 
     $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
     
-      $('#commitments table tbody').append('<tr><td>' + data.goal + 'm</td><td>' + data.settlement_date + '</td><td>' + web3.fromWei(details[2], 'ether') + ' ether</td><td>' + (details[6] ? "true" : "false") + '</td><td><a href="#" class="hash-' + hash + '">view</a></td></tr>');
+      $('#commitments table tbody').append('<tr><td>' + data.goal + '</td><td>' + data.settlement_date + '</td><td>' + web3.fromWei(details[2], 'ether') + '</td><td>' + (details[6] ? "true" : "false") + '</td><td><a href="#" class="hash-' + hash + '">view</a></td></tr>');
 
       $('.hash-' + hash).on('click', function(event) {
         showCommitment(hash);

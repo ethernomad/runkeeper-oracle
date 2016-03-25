@@ -6,3 +6,9 @@ h1 {
 #commitments {
   display: none;
 }
+
+table tbody tr th,
+table tbody tr td {
+  padding: 10px;
+  text-align: right;
+}
