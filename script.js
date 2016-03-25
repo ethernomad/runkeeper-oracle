@@ -86,10 +86,15 @@ function showCommitment(hash) {
     table += '</tbody></table>';
     $('#main').append(table);
 
-    if (!result[6] && data.signature_v2.signed_value) {
+    if (!details[6] && data.signature_v2.signed_value !== null) {
       $('#main').append("Attempting to settle...<br />");
       var tx = runkeeper.settle(hash, '0x' + data.signature_v2.signed_value, data.signature_v2.sig_v, '0x' + data.signature_v2.sig_r, '0x' + data.signature_v2.sig_s, {gas: 250000}, function(err, tx) {
-        showCommitment(hash);
+          if (err) {
+            alert(err);
+          }
+          else {
+            showCommitment(hash);
+          }
       });
     }
   });
