@@ -27,9 +27,21 @@ function listCommitments() {
     var amount = details[2].toFixed();
 
     $.get("https://www.realitykeys.com/api/v1/runkeeper/" + factId + "?accept_terms_of_service=current", function(data) {
-    
+
       $('td.loading').hide();
-      $('#commitments table tbody').append('<tr><td>' + data.goal + '</td><td>' + data.settlement_date + '</td><td>' + web3.fromWei(details[2], 'ether') + '</td><td>' + (details[6] ? "true" : "false") + '</td><td><a href="#" class="hash-' + hash + '">view</a></td></tr>');
+
+      let status;
+      if (data.signature_v2.signed_value === null) {
+        status = 'pending';
+      }
+      else if (data.signature_v2.signed_value === 0) {
+        status = 'failure';
+      }
+      else {
+        status = 'success';
+      }
+
+      $('#commitments table tbody').append('<tr><td>' + data.goal + '</td><td>' + data.settlement_date + '</td><td>' + web3.fromWei(details[2], 'ether') + '</td><td>' + status + '</td><td>' + (details[6] ? "true" : "false") + '</td><td><a href="#" class="hash-' + hash + '">view</a></td></tr>');
 
       $('.hash-' + hash).on('click', function(event) {
         showCommitment(hash);
