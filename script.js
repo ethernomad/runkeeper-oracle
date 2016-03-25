@@ -62,6 +62,17 @@ function showCommitment(hash) {
     $('#main').fadeTo('fast', 1);
     $('#main').append('<h2>Commitment information</h2>');
 
+    let status;
+    if (data.signature_v2.signed_value === null) {
+      status = 'pending';
+    }
+    else if (data.signature_v2.signed_value === 0) {
+      status = 'failure';
+    }
+    else {
+      status = 'success';
+    }
+
     var table = '<table class="specific-commitment"><tbody>';
     table += '<tr><td>User ID</td><td>' + data.user_id + '</td></tr>';
     table += '<tr><td>Activity</td><td>' + data.activity + '</td></tr>';
@@ -70,6 +81,7 @@ function showCommitment(hash) {
     table += '<tr><td>Amount</td><td>' +  web3.fromWei(details[2], 'ether') + ' ether</td></tr>';
     table += '<tr><td>Success payout address</td><td><code>' + details[3] + '</code></td></tr>';
     table += '<tr><td>Failure payout address</td><td><code>' + details[4] + '</code></td></tr>';
+    table += '<tr><td>Status</td><td>' + status + '</td></tr>';
     table += '<tr><td>Settled</td><td>' +  (details[6] ? "true" : "false") + '</td></tr>';
     table += '</tbody></table>';
     $('#main').append(table);
