@@ -29,3 +29,8 @@ table.specific-commitment td {
 table.specific-commitment td:nth-child(2) {
   text-align: left;
 }
+
+label {
+  display: block;
+  margin-top: 10px;
+}
